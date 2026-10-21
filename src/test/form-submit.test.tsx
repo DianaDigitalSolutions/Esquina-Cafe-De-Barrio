@@ -42,7 +42,7 @@ describe("FormSubmit delivery", () => {
     fill("Nombre y apellidos", "Prueba"); fill("Teléfono", "612345678"); fill("Correo electrónico", "test@example.com");
     fill("Día de recogida", "2099-12-20"); fill("Franja de recogida", "Mañana (9:00–13:00)");
     fill("Para cuántas personas", "25"); fill("Elige tu tarta", "custom");
-    fill("Describe tu tarta", "Chocolate"); fill("¿Qué diseño quieres que tenga?", "Flores"); fill("Alergias o intolerancias", "Nueces");
+    fill("Describe tu tarta", "Chocolate"); fill("¿Qué diseño quieres que tenga?", "Flores"); fill("Alergias o intolerancias (opcional)", "Nueces");
     fireEvent.click(screen.getByRole("button", { name: "Enviar encargo" }));
     await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce());
     expect(onClose).toHaveBeenCalledOnce();
