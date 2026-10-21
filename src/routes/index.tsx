@@ -36,7 +36,7 @@ function Index() {
     <>
       <Header onMenu={openMenu} onCake={openCake} />
       <main>
-        <Hero onMenu={openMenu} />
+        <Hero />
         <Breakfasts onMenu={openMenu} />
         <Info />
         <ContactForm onSuccess={() => setToast({ id: Date.now(), title: "¡Mensaje recibido!", text: "Gracias por escribirnos, vecino. Te responderemos volando." })} />

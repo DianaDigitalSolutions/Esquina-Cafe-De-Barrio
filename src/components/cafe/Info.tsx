@@ -23,7 +23,6 @@ export function Info() {
             </ul>
           </div>
           <p className="mt-4 rounded-2xl bg-leaf p-4 text-onleaf"><strong>Desayunos de 7:30 a 11:30.</strong> Tostada, zumo natural y café con leche por 3,50 €.</p>
-          <p className="mt-3 rounded-2xl bg-board p-4 text-chalk"><strong>Tardes de barrio.</strong> Merienda, partida de dominó y tertulia de 17:00 a 20:00.</p>
         </div>
         <div>
           <h3 className="font-hand text-3xl font-bold text-wood">Dónde encontrarnos</h3>
