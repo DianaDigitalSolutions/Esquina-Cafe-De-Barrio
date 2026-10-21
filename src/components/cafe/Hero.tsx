@@ -1,4 +1,4 @@
-export function Hero({ onMenu }: { onMenu: () => void }) {
+export function Hero() {
   return (
     <section id="inicio" className="grain relative text-chalk">
       <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-24 pt-10 sm:px-6 lg:grid-cols-2 lg:pb-32 lg:pt-16">
@@ -10,7 +10,6 @@ export function Hero({ onMenu }: { onMenu: () => void }) {
           <p className="mt-5 max-w-xl text-lg text-chalk/85">
             Tu parada obligatoria cada mañana en el barrio: tostadas con aceite, café recién molido y la charla de siempre.
           </p>
-          <button onClick={onMenu} className="btn mt-8 w-full bg-amber text-amberink sm:w-auto">Ver la Carta de Hoy</button>
         </div>
         <Cup />
       </div>

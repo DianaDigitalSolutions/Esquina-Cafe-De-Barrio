@@ -16,7 +16,7 @@ export function Breakfasts({ onMenu }: { onMenu: () => void }) {
           </article>
         ))}
       </div>
-      <button onClick={onMenu} className="btn mt-8 w-full bg-board text-chalk">Ver la carta completa</button>
+      <button onClick={onMenu} className="btn mt-8 w-full bg-board text-chalk">Ver carta completa</button>
     </section>
   );
 }
