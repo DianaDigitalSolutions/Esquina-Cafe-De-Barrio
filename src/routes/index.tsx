@@ -38,6 +38,15 @@ function Index() {
       <main>
         <Hero />
         <Breakfasts onMenu={openMenu} />
+        <section className="bg-board px-4 py-10 text-chalk sm:px-6 sm:py-14">
+          <div className="mx-auto flex max-w-5xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="font-display text-3xl font-extrabold sm:text-4xl">Encarga tu tarta</h2>
+              <p className="mt-3 text-lg">Tartas caseras para tus celebraciones</p>
+            </div>
+            <a href="#tarta" onClick={(e) => { e.preventDefault(); openCake(); }} className="btn w-full bg-amber text-amberink sm:w-auto">Encargar tarta</a>
+          </div>
+        </section>
         <Info />
         <ContactForm onSuccess={() => setToast({ id: Date.now(), title: "¡Mensaje recibido!", text: "Gracias por escribirnos, vecino. Te responderemos volando." })} />
       </main>
