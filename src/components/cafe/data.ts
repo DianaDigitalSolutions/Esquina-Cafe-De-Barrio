@@ -50,7 +50,7 @@ export const menu: MenuSection[] = [
     { name: "Zumo de naranja natural", price: "2,50", desc: "Exprimido al momento." },
     { name: "Limonada casera", price: "2,20", desc: "Con hierbabuena y poco azúcar." },
     { name: "Batido casero", price: "2,80", desc: "De fresa, chocolate o vainilla." },
-    { name: "Caña", price: "1,80", desc: "Para las tardes de barrio." },
+    { name: "Caña", price: "1,80" },
     { name: "Zumo", price: "3,00" },
     { name: "Vino en copa", price: "3,50" },
     { name: "Vino en botella", price: "16,00" },
