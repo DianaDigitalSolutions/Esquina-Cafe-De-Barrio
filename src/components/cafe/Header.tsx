@@ -20,7 +20,7 @@ export function Header({ onMenu, onCake }: Props) {
             <a key={l.href} href={l.href} className="font-bold transition-colors hover:text-amber">{l.label}</a>
           ))}
           <button onClick={onMenu} className="btn !py-2.5 bg-amber text-amberink">La carta</button>
-          <button onClick={onCake} className="btn !py-2 border-2 border-amber text-amber">Encargar tarta</button>
+          <a href="#tarta" onClick={(e) => { e.preventDefault(); onCake(); }} className="btn !py-2.5 bg-amber text-amberink">Encargar tarta</a>
         </nav>
         <button
           className="flex h-12 w-12 flex-col items-center justify-center gap-1.5 rounded-full border border-chalk/30 lg:hidden"
@@ -38,7 +38,7 @@ export function Header({ onMenu, onCake }: Props) {
         <div className="overflow-hidden" inert={!open}>
           <div className="flex flex-col gap-3 px-4 pb-5 pt-1 sm:px-6">
             <button onClick={act(onMenu)} className="btn w-full bg-amber text-amberink">La carta</button>
-            <button onClick={act(onCake)} className="btn w-full border-2 border-amber text-amber">Encargar tarta</button>
+            <a href="#tarta" onClick={(e) => { e.preventDefault(); act(onCake)(); }} className="btn w-full bg-amber text-amberink">Encargar tarta</a>
             {links.map((l) => (
               <a key={l.href} href={l.href} onClick={act()} className="btn w-full border border-chalk/30 text-chalk">{l.label}</a>
             ))}

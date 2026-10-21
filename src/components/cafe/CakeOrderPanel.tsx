@@ -34,6 +34,7 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
   const [f, setF] = useState<Form>(empty);
   const [errors, setErrors] = useState<Partial<Record<Key, string>>>({});
   const [sendError, setSendError] = useState("");
+  const [sending, setSending] = useState(false);
   const min = minDate();
 
   const set = (k: Key) => (e: { target: { value: string } }) => {
@@ -43,11 +44,37 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
+    if (sending) return;
+    setSendError("");
     const errs = validate(f, min);
     setErrors(errs);
     const first = Object.keys(empty).find((k) => errs[k as Key]);
     if (first) { document.getElementById(`cake-${first}`)?.focus(); return; }
-    setSendError("El envío todavía no está disponible. Tu encargo no se ha enviado.");
+    setSending(true);
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/dianasmf.2009@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          nombre: f.name.trim(), email: f.email.trim(), "teléfono": f.phone.trim(),
+          tarta: cakes.find((cake) => cake.id === f.cake)?.name,
+          personas: Number(f.people), "precio estimado": cakeEstimateLabel(f.cake, Number(f.people)),
+          ...(f.cake === "custom" ? { "descripción": f.flavor.trim() } : {}),
+          fecha: f.date, "franja de recogida": f.slot, "diseño": f.design.trim(),
+          ...(f.allergies.trim() ? { "alergias o intolerancias": f.allergies.trim() } : {}),
+          _subject: "Nuevo encargo de tarta", _template: "table", _captcha: "false",
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok || (result.success !== true && result.success !== "true")) throw new Error("Send failed");
+      setF(empty);
+      onClose();
+      onSuccess();
+    } catch {
+      setSendError("No se ha podido enviar, inténtalo de nuevo");
+    } finally {
+      setSending(false);
+    }
   };
 
   const p = (k: Key) => ({ ...aria(`cake-${k}`, errors[k]), value: f[k], onChange: set(k), className: "field" });
@@ -105,7 +132,7 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
         </div>
         <div className="mt-8 flex flex-col gap-3">
           {sendError && <p role="alert" className="text-danger">{sendError}</p>}
-          <button type="submit" className="btn w-full bg-leaf text-onleaf">Enviar encargo</button>
+          <button type="submit" disabled={sending} className="btn w-full bg-leaf text-onleaf">{sending ? "Enviando…" : "Enviar encargo"}</button>
           <button type="button" onClick={onClose} className="btn w-full border-2 border-line text-ink">Cancelar</button>
         </div>
       </form>
