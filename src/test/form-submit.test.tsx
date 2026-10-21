@@ -5,7 +5,7 @@ import { CakeOrderPanel } from "@/components/cafe/CakeOrderPanel";
 
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const fill = (label: string, value: string) => fireEvent.change(screen.getByLabelText(label, { exact: true }), { target: { value } });
-const accepted = () => Promise.resolve({ ok: true, json: async () => ({ success: "true" }) });
+const accepted = (_url: string, _options: RequestInit) => Promise.resolve({ ok: true, json: async () => ({ success: "true" }) });
 
 describe("FormSubmit delivery", () => {
   it("sends contact fields and the fixed owner and subject, clearing only after acceptance", async () => {
