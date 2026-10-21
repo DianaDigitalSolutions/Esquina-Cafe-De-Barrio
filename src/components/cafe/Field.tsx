@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export function Field({ id, label, error, optional, children }: { id: string; label: string; error?: string; optional?: boolean; children: ReactNode }) {
+export function Field({ id, label, error, optional, children }: { id: string; label: string; error?: string | undefined; optional?: boolean; children: ReactNode }) {
   return (
     <div>
       <label htmlFor={id} className="mb-1.5 block font-bold">
