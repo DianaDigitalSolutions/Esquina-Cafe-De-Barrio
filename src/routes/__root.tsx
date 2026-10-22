@@ -121,6 +121,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) window.scrollTo(0, 0);
+    };
+    window.addEventListener("pageshow", onPageShow);
+    return () => window.removeEventListener("pageshow", onPageShow);
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
