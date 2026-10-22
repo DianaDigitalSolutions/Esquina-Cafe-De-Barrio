@@ -9,6 +9,20 @@ Landing page en español, responsive y mobile-first para una cafetería de barri
 
 - **GitHub:** [PENDIENTE] — el proyecto todavía no está enlazado a un repositorio de GitHub.
 
+## Arranque
+
+```sh
+npm install
+npm run dev      # http://localhost:8080
+npm run build
+npm run preview  # sirve la build de producción
+```
+
+Pruebas: `npm test`.
+
+- **Node:** v22.22.0 (versión usada en el entorno de desarrollo; `package.json` no declara `engines`).
+- El proyecto incluye `bun.lock`; con `npm install` también funciona.
+
 ## Tecnología
 
 Aplicación React con enrutado y render en servidor mediante TanStack Start (Vite como herramienta de build). Versiones reales de `package.json`:
@@ -23,19 +37,6 @@ Aplicación React con enrutado y render en servidor mediante TanStack Start (Vit
 | Vitest | ^4.1.10 |
 
 Tailwind v4 se configura por CSS (`src/styles.css`), sin `tailwind.config.js`. No hay backend ni base de datos propios.
-
-## Arranque
-
-```sh
-npm install
-npm run dev      # http://localhost:8080
-npm run build
-```
-
-Pruebas: `npm test`.
-
-- **Node:** v22.22.0 (versión usada en el entorno de desarrollo; `package.json` no declara `engines`).
-- El proyecto incluye `bun.lock`; con `npm install` también funciona.
 
 ## Estructura
 
@@ -66,10 +67,28 @@ Solo se muestra el toast de éxito si FormSubmit confirma la recepción; si fall
 
 - **Activación pendiente:** hay que pulsar «Activate Form» en el correo que FormSubmit envió a dianasmf.2009@gmail.com. Sin ese paso, los envíos se rechazan.
 
-## Datos
+## Qué usa datos reales
 
-- **Precargado:** todo el contenido está en el código — desayunos, las 6 secciones de la carta con sus precios, las 3 tartas con tallas de 8/12/18/25 personas, horarios y dirección (`src/components/cafe/data.ts` y los propios componentes). El mapa es un iframe de Google Maps de Calle del Olmo, 12, Madrid.
-- **localStorage:** no se usa (tampoco sessionStorage ni IndexedDB). No hay nada que reiniciar ni borrar.
+- **Envío de mensajes y de encargos:** petición HTTP real a FormSubmit (ver sección anterior); el éxito solo se muestra cuando el servicio lo confirma.
+- **Mapa:** iframe real de Google Maps sobre la dirección indicada (Calle del Olmo, 12, Madrid), con el botón «Cómo llegar» que abre Google Maps en otra pestaña.
+- **Precios de la carta y desayunos:** los valores reales publicados en `src/components/cafe/data.ts`; el menú y el formulario leen del mismo sitio, así que no pueden divergir.
+- **Estimado de la tarta:** se calcula de verdad en el navegador a partir del precio base y del número de personas (`cakeEstimate`), y se actualiza mientras se rellena el formulario.
+- **Horarios, disponibilidad de recogida y festivos:** reglas reales aplicadas al formulario — la fecha mínima es hoy + 2 días y las horas de recogida cambian según el día elegido (sábados, domingos y festivos).
+
+## Qué está simulado o usa datos de ejemplo
+
+- **No hay backend ni base de datos:** todo el contenido (desayunos, carta, tartas, horarios, dirección y textos) está escrito en el código, no se carga de ningún servidor.
+- **Confirmación del encargo:** la llamada telefónica para confirmar el encargo es manual; la web no agenda ni reserva nada automáticamente.
+- **Límite de 20 tartas al día:** es un aviso escrito, no un control informático.
+- **Precio de «Tarta a tu gusto»:** orientativo; el importe final lo confirma el negocio por teléfono.
+- **Dirección y referencias locales** («Calle del Olmo, 12», «frente a la plaza principal», «la panadería de Pepa») y el texto «Abierto desde 1987»: datos de ejemplo aportados para la demo, que conviene sustituir por los definitivos.
+- **Nada se finge en el envío:** no hay retardo ni simulación de éxito; si el envío no llega, el formulario lo dice.
+
+## Datos de ejemplo y cómo reiniciarlos
+
+- **No se usa `localStorage`, `sessionStorage` ni IndexedDB:** la web no guarda nada en el dispositivo, así que no hay nada que reiniciar ni borrar.
+- **Para volver al estado inicial basta con recargar la página:** los paneles abiertos, el texto escrito en los formularios y el toast desaparecen.
+- **Para cambiar los datos de ejemplo**, edite el contenido del código: `src/components/cafe/data.ts` (desayunos, carta, tartas, tallas y precios), `src/components/cafe/Info.tsx` (horarios y dirección) y los textos de `Hero.tsx`, `Breakfasts.tsx` y `Footer.tsx`. Al guardar, el servidor de desarrollo recarga solo.
 
 ## Responsive
 
