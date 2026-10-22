@@ -7,6 +7,27 @@ const empty = { name: "", phone: "", email: "", date: "", slot: "", people: "", 
 type Form = typeof empty;
 type Key = keyof Form;
 
+const holidays = ["01-01", "01-06", "05-01", "08-15", "10-12", "11-01", "12-06", "12-08", "12-25"];
+function pickupTimes(date: string) {
+  if (!date) return { morning: [], afternoon: [], limited: false };
+  const [year, month, day] = date.split("-").map(Number);
+  if (year === undefined || month === undefined || day === undefined) return { morning: [], afternoon: [], limited: false };
+  const weekday = new Date(year, month - 1, day).getDay();
+  const limited = weekday === 0 || holidays.includes(date.slice(5));
+  const times = (start: number, end: number) => {
+    const options: string[] = [];
+    for (let minute = start; minute <= end; minute += 30) {
+      options.push(`${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`);
+    }
+    return options;
+  };
+  return {
+    morning: times(limited ? 540 : weekday === 6 ? 510 : 450, weekday === 6 || limited ? 810 : 780),
+    afternoon: limited ? [] : times(weekday === 6 ? 1020 : 990, weekday === 6 ? 1230 : 1200),
+    limited,
+  };
+}
+
 function minDate() {
   const d = new Date();
   d.setDate(d.getDate() + 2);
@@ -22,7 +43,8 @@ function validate(f: Form, min: string) {
   else if (!EMAIL_RE.test(f.email.trim())) e.email = "Este correo no parece válido. Revisa que tenga @ y un dominio.";
   if (!f.date) e.date = "Elige el día en que quieres recoger la tarta.";
   else if (f.date < min) e.date = "Necesitamos 2 días para prepararla. Elige una fecha posterior.";
-  if (!f.slot) e.slot = "Elige si prefieres recogerla por la mañana o por la tarde.";
+  const hours = pickupTimes(f.date);
+  if (![...hours.morning, ...hours.afternoon].includes(f.slot)) e.slot = "Elige la hora a la que pasarás a recogerla.";
   if (!f.people) e.people = "Dinos para cuántas personas es la tarta.";
   if (!cakes.some((cake) => cake.id === f.cake)) e.cake = "Elige la tarta que te apetece.";
   if (f.cake === "custom" && !f.flavor.trim()) e.flavor = "Cuéntanos de qué te apetece la tarta.";
@@ -36,9 +58,17 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
   const [sendError, setSendError] = useState("");
   const [sending, setSending] = useState(false);
   const min = minDate();
+  const hours = pickupTimes(f.date);
 
   const set = (k: Key) => (e: { target: { value: string } }) => {
-    setF((p) => ({ ...p, [k]: e.target.value }));
+    const value = e.target.value;
+    setF((p) => {
+      if (k === "date") {
+        const next = pickupTimes(value);
+        return { ...p, date: value, slot: [...next.morning, ...next.afternoon].includes(p.slot) ? p.slot : "" };
+      }
+      return { ...p, [k]: value };
+    });
     if (errors[k]) setErrors((p) => ({ ...p, [k]: undefined }));
   };
 
@@ -82,7 +112,7 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
   return (
     <Panel id="tarta" title="Encarga tu tarta" onClose={onClose} maxW="max-w-2xl">
       <p className="text-lg text-soft">
-        Las hacemos en casa, con tiempo y mucho cariño. Cuéntanos qué te apetece y la preparamos a tu gusto. Tartas desde 18 € para 8 personas; el precio final te lo confirmamos por teléfono. Necesitamos 2 días de antelación.
+        Las hacemos en casa, con tiempo y mucho cariño. Cuéntanos qué te apetece y la preparamos a tu gusto. Tartas desde 18 € para 8 personas; el precio final te lo confirmamos por teléfono. Necesitamos 2 días de antelación. Preparamos un máximo de 20 tartas al día; confirmamos siempre tu encargo por teléfono y, si ese día está completo, te proponemos otra fecha.
       </p>
       <form noValidate onSubmit={submit} className="mt-6">
         <div className="space-y-8">
@@ -96,12 +126,17 @@ export function CakeOrderPanel({ onClose, onSuccess }: { onClose: () => void; on
             <legend className="mb-2 font-hand text-3xl font-bold text-wood">Tu tarta</legend>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field id="cake-date" label="Día de recogida" error={errors.date}><input type="date" min={min} {...p("date")} /></Field>
-              <Field id="cake-slot" label="Franja de recogida" error={errors.slot}>
-                <select {...p("slot")}>
-                  <option value="">Elige una franja</option>
-                  <option>Mañana (9:00–13:00)</option>
-                  <option>Tarde (17:00–20:00)</option>
+              <Field id="cake-slot" label="Hora de recogida" error={errors.slot}>
+                <select {...p("slot")} disabled={!f.date}>
+                  <option value="">{f.date ? "Elige una hora" : "Elige primero el día"}</option>
+                  {f.date && <optgroup label="Por la mañana">
+                    {hours.morning.map((time) => <option key={time} value={time}>{time}</option>)}
+                  </optgroup>}
+                  {hours.afternoon.length > 0 && <optgroup label="Por la tarde">
+                    {hours.afternoon.map((time) => <option key={time} value={time}>{time}</option>)}
+                  </optgroup>}
                 </select>
+                {hours.limited && <p className="mt-1.5 text-sm text-soft">Domingos y festivos abrimos de 9:00 a 14:00. Confirmamos el encargo por teléfono según disponibilidad.</p>}
               </Field>
             </div>
             <Field id="cake-people" label="Para cuántas personas" error={errors.people}>
