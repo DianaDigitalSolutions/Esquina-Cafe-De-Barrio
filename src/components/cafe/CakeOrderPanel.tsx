@@ -11,6 +11,7 @@ const holidays = ["01-01", "01-06", "05-01", "08-15", "10-12", "11-01", "12-06",
 function pickupTimes(date: string) {
   if (!date) return { morning: [], afternoon: [], limited: false };
   const [year, month, day] = date.split("-").map(Number);
+  if (year === undefined || month === undefined || day === undefined) return { morning: [], afternoon: [], limited: false };
   const weekday = new Date(year, month - 1, day).getDay();
   const limited = weekday === 0 || holidays.includes(date.slice(5));
   const times = (start: number, end: number) => {
